@@ -9,6 +9,10 @@ namespace JET.Infra.Data.Context
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<Products>()
+                .Property(s => s.DateCreation)
+                .HasDefaultValueSql("GETDATE()");
+
             base.OnModelCreating(builder);
         }
 

@@ -10,7 +10,6 @@ namespace JET.Domain.Entities.Tables
         public int Id { get; set; }
         [Required, MaxLength(150)]
         public string ProductName { get; set; }
-        [Timestamp]
         public DateTime DateCreation { get; set; }
         public byte[]? Image { get; set; }
         [MaxLength(2000)]

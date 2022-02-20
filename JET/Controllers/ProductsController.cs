@@ -12,10 +12,12 @@ namespace JET.Controllers
     public class ProductsController : Controller
     {
         private readonly IProductsService _produtoService;
+        private readonly ILogger<ProductsController> _logger;
 
-        public ProductsController(IProductsService produtoservice)
+        public ProductsController(IProductsService produtoservice, ILogger<ProductsController> logger)
         {
             _produtoService = produtoservice;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -29,13 +31,36 @@ namespace JET.Controllers
 
             try
             {
-                var result = await _produtoService.Get();
+                var result = await _produtoService.Get(null);
 
                 return Ok(new { items = result, hasNext = true });
             }
             catch (ArgumentException ex)
             {
                 return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet]
+        [Route("products/{id}")]
+        public async Task<ActionResult> GetById(int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            try
+            {
+                var result = await _produtoService.Get(id);
+
+                return Ok(new { items = result, hasNext = true });
+            }
+            catch (ArgumentException ex)
+            {
+                return Problem(
+    detail: ex.StackTrace,
+    title: ex.Message);
             }
         }
 
@@ -51,21 +76,33 @@ namespace JET.Controllers
         [Route(ApiRoutes.Product.Create)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult> Post([FromBody] Products body)
+        public async Task<ActionResult> Create([FromBody] Products body)
         {
-            var command = new Products()
+            try
             {
-                ProductName = body.ProductName,
-                Description = body.Description,
-                Stock = body.Stock,
-                Status = body.Status,
-                Price = body.Price
-            };
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            await _produtoService.Post(command);
+                var command = new Products()
+                {
+                    ProductName = body.ProductName,
+                    Description = body.Description,
+                    Stock = body.Stock,
+                    Status = body.Status,
+                    Price = body.Price
+                };
 
-            return Created(ApiRoutes.Product.Create, command);
+                await _produtoService.Post(command);
+
+                return Created(ApiRoutes.Product.Create, command);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw ex.InnerException;
+            }
         }
-
     }
 }

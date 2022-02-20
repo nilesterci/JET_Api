@@ -19,7 +19,7 @@ namespace JET.Infra.Data.Repositories
             _context = context;
         }
 
-        public async Task<List<Products>> Get()
+        public async Task<List<Products>> Get(int? id)
         {
             try
             {
@@ -29,11 +29,11 @@ namespace JET.Infra.Data.Repositories
 
                 //query = query.Take(filtro.pageSize);
 
-                //if (String.IsNullOrEmpty(filtro.ativo))
-                //    query = query.Where(x => x.ativo == "A");
+                if (id != null)
+                    query = query.Where(x => x.Id == id);
 
                 //if (!String.IsNullOrEmpty(filtro.search))
-                    //query = query.Where(x => x.nome_produto.Contains(filtro.search) || x.observacao.Contains(filtro.search) || x.tipo.Contains(filtro.search));
+                //query = query.Where(x => x.nome_produto.Contains(filtro.search) || x.observacao.Contains(filtro.search) || x.tipo.Contains(filtro.search));
 
                 return await query.ToListAsync();
             }
@@ -48,21 +48,13 @@ namespace JET.Infra.Data.Repositories
         {
             try
             {
-                try
-                {
-                    await _context.Products.AddAsync(body);
-                    _context.SaveChanges();
+                await _context.Products.AddAsync(body);
+                _context.SaveChanges();
 
-                    return body;
-                }
-                catch (Exception ex)
-                {
-                    throw ex;
-                }
+                return body;
             }
             catch (Exception ex)
             {
-
                 throw ex;
             }
         }

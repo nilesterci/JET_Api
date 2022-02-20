@@ -17,13 +17,13 @@ namespace JET.Application.Services
         {
             _repository = repository;
         }
-        public async Task<List<Products>> Get()
+        public async Task<List<Products>> Get(int? id)
         {
             try
             {
-                return await _repository.Get();
+                return await _repository.Get(id);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -35,7 +35,7 @@ namespace JET.Application.Services
             {
                 return await _repository.Post(body);
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
                 throw ex;
             }

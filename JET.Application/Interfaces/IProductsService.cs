@@ -9,7 +9,7 @@ namespace JET.Application.Interfaces
 {
     public interface IProductsService
     {
-        Task<List<Products>> Get();
+        Task<List<Products>> Get(int? id);
         Task<Products> Post(Products body);
     }
 }

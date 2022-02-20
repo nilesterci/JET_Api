@@ -1,4 +1,6 @@
 using JET;
+using Serilog;
+using Serilog.Sinks.MSSqlServer;
 
 namespace TwoBeers
 {
@@ -11,6 +13,21 @@ namespace TwoBeers
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
+            .ConfigureAppConfiguration((hostingContext, config) =>
+            {
+                var configurationRoot = config.Build();
+
+                Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                .WriteTo.MSSqlServer(configurationRoot.GetConnectionString("DefaultConnection"),
+                sinkOptions: new MSSqlServerSinkOptions
+                {
+                    AutoCreateSqlTable = true,
+                    TableName = "Logs"
+                })
+                .CreateLogger();
+            })
+            .UseSerilog()
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

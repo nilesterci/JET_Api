@@ -94,10 +94,10 @@ namespace JET
 
             });
 
-            services.AddDbContext<AppDbContext>(options =>
+            services.AddDbContextPool<AppDbContext>(options =>
             {
                 var connectionString = AppName;
-                options.UseMySql(connectionString, new MySqlServerVersion(new Version(10, 4, 22)), b => b.MigrationsAssembly("JET"));
+                options.UseSqlServer(connectionString);
             });
 
             RegisterServices(services);
