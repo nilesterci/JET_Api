@@ -1,6 +1,9 @@
 ﻿using JET.Infra.Data.Context;
 using JET.Infrastructure.IoC;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Net;
 using System.Text;
@@ -51,7 +54,11 @@ namespace JET
                 options.KnownProxies.Add(IPAddress.Parse("127.0.0.1"));
             });
 
-            services.AddControllers();
+            services.AddControllers(options =>
+            {
+                options.InputFormatters.Insert(0, GetJsonPatchInputFormatter());
+            })
+                .AddNewtonsoftJson();
 
             services.AddOptions();
 
@@ -59,7 +66,7 @@ namespace JET
 
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TwoBeers", Version = "v2.1.1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "JET", Version = "v1" });
 
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
@@ -141,6 +148,22 @@ namespace JET
         private static void RegisterServices(IServiceCollection services)
         {
             DependencyContainer.RegisterServices(services);
+        }
+
+        private static NewtonsoftJsonPatchInputFormatter GetJsonPatchInputFormatter()
+        {
+            var builder = new ServiceCollection()
+                .AddLogging()
+                .AddMvc()
+                .AddNewtonsoftJson()
+                .Services.BuildServiceProvider();
+
+            return builder
+                .GetRequiredService<IOptions<MvcOptions>>()
+                .Value
+                .InputFormatters
+                .OfType<NewtonsoftJsonPatchInputFormatter>()
+                .First();
         }
     }
 }

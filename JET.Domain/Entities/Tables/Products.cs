@@ -18,4 +18,16 @@ namespace JET.Domain.Entities.Tables
         public bool Status { get; set; }
         public double Price { get; set; }
     }
+
+    public class ProductCreateOrUpdate
+    {
+        [Required, MaxLength(150)]
+        public string ProductName { get; set; }
+        public byte[]? Image { get; set; }
+        [MaxLength(2000)]
+        public string Description { get; set; }
+        public int Stock { get; set; }
+        public bool Status { get; set; }
+        public double Price { get; set; }
+    }
 }

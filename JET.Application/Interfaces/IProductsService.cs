@@ -1,4 +1,5 @@
 ﻿using JET.Domain.Entities.Tables;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,10 @@ namespace JET.Application.Interfaces
 {
     public interface IProductsService
     {
-        Task<List<Products>> Get(int? id);
-        Task<Products> Post(Products body);
+        Task<Products> Create(ProductCreateOrUpdate body);
+        Products GetById(int id);
+        List<Products> GetAll();
+        Task<Products> Patch(JsonPatchDocument<Products> body);
+        Task<Products> Delete(Products body);
     }
 }

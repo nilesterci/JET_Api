@@ -1,6 +1,7 @@
 ﻿using JET.Application.Interfaces;
 using JET.Domain.Entities.Tables;
 using JET.Domain.Interfaces;
+using Microsoft.AspNetCore.JsonPatch;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,11 +18,21 @@ namespace JET.Application.Services
         {
             _repository = repository;
         }
-        public async Task<List<Products>> Get(int? id)
+
+        public async Task<Products> Create(ProductCreateOrUpdate body)
         {
             try
             {
-                return await _repository.Get(id);
+                var entity = new Products()
+                {
+                    ProductName = body.ProductName,
+                    Description = body.Description,
+                    Stock = body.Stock,
+                    Status = body.Status,
+                    Price = body.Price
+                };
+
+                return await _repository.Create(entity);
             }
             catch (Exception ex)
             {
@@ -29,14 +40,51 @@ namespace JET.Application.Services
             }
         }
 
-        public async Task<Products> Post(Products body)
+        public Products GetById(int id)
         {
             try
             {
-                return await _repository.Post(body);
+                return _repository.GetById(id);
             }
             catch (Exception ex)
             {
+                throw ex;
+            }
+        }
+        public List<Products> GetAll()
+        {
+            try
+            {
+                return _repository.GetAll();
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<Products> Patch(JsonPatchDocument<Products> body)
+        {
+            try
+            {
+                return await _repository.Patch(body);
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+
+        public async Task<Products> Delete(Products entity)
+        {
+            try
+            {
+                return await _repository.Delete(entity);
+            }
+            catch (Exception ex)
+            {
+
                 throw ex;
             }
         }

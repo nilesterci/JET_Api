@@ -2,7 +2,7 @@ using JET;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 
-namespace TwoBeers
+namespace JET
 {
     public class Program
     {

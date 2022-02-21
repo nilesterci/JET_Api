@@ -9,7 +9,7 @@
         public static class Product
         {
             public const string Create = Base + "/products";
-            public const string Get = Base + "/products/{id}";
+            public const string GetById = Base + "/products/{id}";
             public const string GetAll = Base + "/products";
             public const string Patch = Base + "/products/{id}";
             public const string Delete = Base + "/products/{id}";
