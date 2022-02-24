@@ -50,11 +50,19 @@ namespace JET.Infra.Data.Repositories
             }
         }
 
-        public List<Products> GetAll()
+        public List<Products> GetAll(bool status, string search)
         {
             try
             {
                 IQueryable<Products> query = _context.Products;
+
+                if (status)
+                {
+                    query = query.Where(a => a.Status == status);
+                }
+
+                if (!String.IsNullOrEmpty(search))
+                    query = query.Where(x => x.ProductName.ToUpper().Contains(search) || x.Description.ToUpper().Contains(search));
 
                 return query.ToList();
             }

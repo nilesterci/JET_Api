@@ -1,2 +1,4 @@
 Add-Migration NewMigration -Project JET.Infra.Data
 update-database
+
+User Secret

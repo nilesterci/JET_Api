@@ -1,4 +1,3 @@
-using JET;
 using Serilog;
 using Serilog.Sinks.MSSqlServer;
 

@@ -13,6 +13,7 @@
             public const string GetAll = Base + "/products";
             public const string Patch = Base + "/products/{id}";
             public const string Delete = Base + "/products/{id}";
+            public const string SendImage = Base + "/productImage";
         }
     }
 }

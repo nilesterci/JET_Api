@@ -12,7 +12,7 @@ namespace JET.Domain.Interfaces
     {
         Task<Products> Create(Products body);
         Products GetById(int id);
-        List<Products> GetAll();
+        List<Products> GetAll(bool status, string search);
         Task<Products> Patch(JsonPatchDocument<Products> body);
         Task<Products> Delete(Products body);
     }

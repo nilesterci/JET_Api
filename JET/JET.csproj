@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -38,6 +38,11 @@
     <ProjectReference Include="..\JET.Application\JET.Application.csproj" />
     <ProjectReference Include="..\JET.Infra.Data\JET.Infra.Data.csproj" />
     <ProjectReference Include="..\JET.Infrastructure.IoC\JET.Infrastructure.IoC.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="StaticFiles\" />
+    <Folder Include="Resources\Images\" />
   </ItemGroup>
 
 </Project>

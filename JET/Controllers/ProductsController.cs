@@ -5,6 +5,7 @@ using JET.Routes;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net.Http.Headers;
 
 namespace JET.Controllers
 {
@@ -30,7 +31,7 @@ namespace JET.Controllers
         /// <response code="201">Success creating new product</response>
         /// <response code="400">Bad request</response>
         /// <response code ="429">Too Many Requests</response>
-        [HttpPost]
+        [HttpPost, DisableRequestSizeLimit]
         [Route(ApiRoutes.Product.Create)]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -43,9 +44,22 @@ namespace JET.Controllers
                     return BadRequest(ModelState);
                 }
 
-                var result = await _produtoService.Create(body);
+                var entity = new Products()
+                {
+                    ProductName = body.ProductName,
+                    Image = body.Image,
+                    Description = body.Description,
+                    Stock = body.Stock,
+                    Status = body.Status,
+                    StatusPromo = body.StatusPromo,
+                    Price = body.Price
+                };
 
-                return Created(ApiRoutes.Product.Create, result);
+                var result = await _produtoService.Create(entity);
+
+                return Created(ApiRoutes.Product.Create, new { message = "Produto cadastrado com sucesso", items = result });
+
+
             }
             catch (Exception ex)
             {
@@ -98,7 +112,7 @@ namespace JET.Controllers
         [Route(ApiRoutes.Product.GetAll)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult GetAll()
+        public ActionResult GetAll([FromQuery] bool status, [FromQuery] string? search)
         {
             if (!ModelState.IsValid)
             {
@@ -107,7 +121,7 @@ namespace JET.Controllers
 
             try
             {
-                var result = _produtoService.GetAll();
+                var result = _produtoService.GetAll(status, search);
 
                 return Ok(new { items = result, hasNext = true });
             }
@@ -141,7 +155,7 @@ namespace JET.Controllers
                 var productsDB = _produtoService.GetById(id);
 
                 if (productsDB == null)
-                    return NotFound("No record found for updated");
+                    return Ok(new { message = "Não foi encontrado produto para ser atualizado" });
 
                 body.ApplyTo(productsDB, ModelState);
 
@@ -149,7 +163,10 @@ namespace JET.Controllers
 
                 var result = await _produtoService.Patch(body);
 
-                return Ok("Resource updated successfully");
+                return Ok(new
+                {
+                    message = "Produto atualizado com sucesso"
+                });
             }
             catch (ArgumentException ex)
             {
@@ -181,11 +198,11 @@ namespace JET.Controllers
                 var productsDB = _produtoService.GetById(id);
 
                 if (productsDB == null)
-                    return NotFound("No record found for delete");
+                    return NotFound(new { message = "Produto não encontrado para ser deletado" });
 
                 var result = await _produtoService.Delete(productsDB);
 
-                return Ok("Resource deleted successfully");
+                return Ok(new { message = "Produto deletado com sucesso" });
             }
             catch (ArgumentException ex)
             {
@@ -193,6 +210,49 @@ namespace JET.Controllers
             }
         }
 
+        /// <summary>
+        /// Create new product
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        /// <response code="201">Success creating new product</response>
+        /// <response code="400">Bad request</response>
+        /// <response code ="429">Too Many Requests</response>
+        [HttpPost, DisableRequestSizeLimit]
+        [Route(ApiRoutes.Product.SendImage)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ResponseImage PostFile(IFormFile fileImage)
+        {
+            try
+            {
+                var fileName = "";
+
+                if (fileImage != null)
+                {
+                    var file = Request.Form.Files[0];
+                    var folderName = Path.Combine("assets", "images");
+                    var dirName = "C:\\Users\\Nil\\Desktop\\JET angular\\jet\\src\\";
+                    var pathToSave = Path.Combine(dirName, folderName);
+
+                    if (file.Length > 0)
+                    {
+                        fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
+                        var fullPath = Path.Combine(pathToSave, fileName);
+                        using (var stream = new FileStream(fullPath, FileMode.Create))
+                        {
+                            file.CopyTo(stream);
+                        }
+                    }
+                }
+                return new ResponseImage { NameFile = fileName, Response = "Imagem enviada" };
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
 
     }
 }

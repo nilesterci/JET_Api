@@ -36,12 +36,12 @@ namespace JET.Infra.Data.Migrations
                         .HasDefaultValueSql("GETDATE()");
 
                     b.Property<string>("Description")
-                        .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
-                    b.Property<byte[]>("Image")
-                        .HasColumnType("varbinary(max)");
+                    b.Property<string>("Image")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<double>("Price")
                         .HasColumnType("float");
@@ -52,6 +52,9 @@ namespace JET.Infra.Data.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.Property<bool>("Status")
+                        .HasColumnType("bit");
+
+                    b.Property<bool?>("StatusPromo")
                         .HasColumnType("bit");
 
                     b.Property<int>("Stock")

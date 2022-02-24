@@ -19,20 +19,11 @@ namespace JET.Application.Services
             _repository = repository;
         }
 
-        public async Task<Products> Create(ProductCreateOrUpdate body)
+        public async Task<Products> Create(Products body)
         {
             try
             {
-                var entity = new Products()
-                {
-                    ProductName = body.ProductName,
-                    Description = body.Description,
-                    Stock = body.Stock,
-                    Status = body.Status,
-                    Price = body.Price
-                };
-
-                return await _repository.Create(entity);
+                return await _repository.Create(body);
             }
             catch (Exception ex)
             {
@@ -51,11 +42,11 @@ namespace JET.Application.Services
                 throw ex;
             }
         }
-        public List<Products> GetAll()
+        public List<Products> GetAll(bool status, string search)
         {
             try
             {
-                return _repository.GetAll();
+                return _repository.GetAll(status, search);
             }
             catch (Exception ex)
             {

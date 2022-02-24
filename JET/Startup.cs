@@ -1,8 +1,10 @@
 ﻿using JET.Infra.Data.Context;
 using JET.Infrastructure.IoC;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using System.Net;
@@ -36,14 +38,7 @@ namespace JET
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:4200",
-                        "http://painel.pontojota.com",
-                        "http://pontojota.com",
-                        "https://painel.pontojota.com",
-                        "https://pontojota.com",
-                        "http://localhost:80",
-                        "http://localhost:5000",
-                        "http://localhost:443")
+                    builder.WithOrigins("http://localhost:4200")
                                         .AllowAnyHeader()
                                         .AllowAnyMethod();
                 });
